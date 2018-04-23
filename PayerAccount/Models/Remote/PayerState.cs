@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PayerAccount.Models
+namespace PayerAccount.Models.Remote
 {
     internal class PayerState
     {

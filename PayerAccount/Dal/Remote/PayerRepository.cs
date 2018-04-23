@@ -4,20 +4,19 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using FirebirdSql.Data.FirebirdClient;
 using PayerAccount.Utils;
-using PayerAccount.Models;
-using System.Text;
+using PayerAccount.Models.Remote;
 
 [assembly: InternalsVisibleTo("PayerAccount.Test")]
-namespace PayerAccount.Repositories
+namespace PayerAccount.Dal.Remote
 {
     internal class PayerRepository
     {
-        private const string CONNECTION_STRING_FORMAT = "DataSource={0};User={1};Password={2};Database={3};Charset=UTF8";
+        private const string CONNECTION_STRING_FORMAT = "DataSource={0};Database={1};User={2};Password={3};Charset=UTF8";
         private DbConnection connection;
         
         public PayerRepository(string url, string path, string user, string password)
         {
-            connection = new FbConnection(string.Format(CONNECTION_STRING_FORMAT, url, user, password, path));
+            connection = new FbConnection(string.Format(CONNECTION_STRING_FORMAT, url, path, user, password));
         }
 
         public PayerState Get(int payerNumber)

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FirebirdSql.Data.FirebirdClient;
 using PayerAccount.Common;
-using PayerAccount.Repositories;
+using PayerAccount.Dal.Remote;
 
 namespace PayerAccount.Test
 {
