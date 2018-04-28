@@ -1,4 +1,6 @@
-﻿namespace PayerAccount.Models.Local
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace PayerAccount.Models.Local
 {
     public class User
     {

@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PayerAccount.Dal.Local;
+using PayerAccount.Models.Local;
 
 namespace PayerAccount
 {
@@ -18,6 +22,20 @@ namespace PayerAccount
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddDbContext<PayerAccountDbContext>(options =>
+                options.UseSqlite("Data Source=PayerAccount.db"));
+
+            //services.AddIdentity<User, IdentityRole>()
+            //    .AddEntityFrameworkStores<PayerAccountDbContext>()
+            //    .AddDefaultTokenProviders();
+
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.HttpOnly = true;
+            //    options.LoginPath = "/Account/Login";
+            //    options.AccessDeniedPath = "/Account/AccessDenied";
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,6 +52,8 @@ namespace PayerAccount
             }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
