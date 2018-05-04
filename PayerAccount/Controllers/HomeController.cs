@@ -1,20 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using PayerAccount.Models;
+using PayerAccount.BusinessLogic;
 
 namespace PayerAccount.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IPayerAccountContext context;
+
         public IActionResult Index()
+        {
+            if (context.IsLogin)
+                return Main();
+
+            return Login();
+        }
+
+        [AcceptVerbs("get")]
+        public IActionResult Login()
         {
             return View();
         }
 
+        [AcceptVerbs("post")]
+        public IActionResult Login(string payerNumber, int regionId, string password)
+        {
+            return View();
+        }
+
+        public IActionResult Main()
+        {
+            return View();
+        }
+
+        //
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
