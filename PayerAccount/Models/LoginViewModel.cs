@@ -1,15 +1,14 @@
-﻿using PayerAccount.Models.Local;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 
 namespace PayerAccount.Models
 {
     public class LoginViewModel
     {
-        public IEnumerable<Region> Regions { get; }
+        public int PayerNumber { get; set; }
+        public int RegionId { get; set; }
+        public string PayerPassword { get; set; }
 
-        public LoginViewModel(IEnumerable<Region> regions)
-        {
-            Regions = regions;
-        }
+        public IEnumerable<SelectListItem> Regions { get; set; }
     }
 }

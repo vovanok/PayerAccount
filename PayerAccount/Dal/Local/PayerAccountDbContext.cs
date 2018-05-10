@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PayerAccount.Models.Local;
+using PayerAccount.Dal.Local.Data;
 
 namespace PayerAccount.Dal.Local
 {
@@ -9,8 +9,8 @@ namespace PayerAccount.Dal.Local
         public DbSet<Department> Departments { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public PayerAccountDbContext(DbContextOptions options)
-            : base(options)
+        public PayerAccountDbContext()
+            : base()
         {
         }
     }

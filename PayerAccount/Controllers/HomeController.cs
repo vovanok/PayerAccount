@@ -2,12 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using PayerAccount.Models;
 using PayerAccount.BusinessLogic;
+using System;
 
 namespace PayerAccount.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IPayerAccountContext context;
+
+        public HomeController(IPayerAccountContext context)
+        {
+            this.context = context;
+        }
 
         public IActionResult Index()
         {
@@ -20,18 +26,58 @@ namespace PayerAccount.Controllers
         [AcceptVerbs("get")]
         public IActionResult Login()
         {
-            return View();
+            return View(context.GetEmptyLoginModel());
         }
 
         [AcceptVerbs("post")]
-        public IActionResult Login(string payerNumber, int regionId, string password)
+        public IActionResult Login(LoginViewModel loginModel)
         {
-            return View();
+            try
+            {
+                context.Login(loginModel, HttpContext);
+                return Main();
+            }
+            catch (Exception ex)
+            {
+                return Message($"Login failed: {ex.Message}");
+            }
+        }
+
+        [AcceptVerbs("get")]
+        public IActionResult Registrate()
+        {
+            return View(context.GetEmptyRegistrateModel());
+        }
+
+        [AcceptVerbs("post")]
+        public IActionResult Registrate(RegistrateViewModel registrateModel)
+        {
+            try
+            {
+                context.Registrate(registrateModel);
+                return Message($"Registration success");
+            }
+            catch (Exception ex)
+            {
+                return Message($"Registration failed: {ex.Message}");
+            }
         }
 
         public IActionResult Main()
         {
-            return View();
+            if (!context.IsLogin)
+                return Login();
+
+            var mainModel = context.GetCurrentMainViewModel(HttpContext);
+            if (mainModel == null)
+                return Login();
+
+            return View(mainModel);
+        }
+
+        public IActionResult Message(string message)
+        {
+            return View(message ?? string.Empty);
         }
 
         //

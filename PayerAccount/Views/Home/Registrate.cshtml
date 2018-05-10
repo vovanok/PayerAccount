@@ -1,0 +1,30 @@
+﻿@model RegistrateViewModel
+
+@{
+    ViewData["Title"] = "User registration";
+}
+
+<h2>User registration</h2>
+<div class="row">
+    <form method="post" action="/Home/Registrate">
+        <table>
+            <tr>
+                <td>Номер лицевого счета:</td>
+                <td><input asp-for="@Model.UserNumber" type="text" /></td>
+            </tr>
+            <tr>
+                <td>Регион:</td>
+                <td><select asp-for="@Model.UserRegionId" asp-items="@Model.Regions" /></td>
+            </tr>
+            <tr>
+                <td>Пароль:</td>
+                <td><input asp-for="@Model.UserPassword" type="password" /></td>
+            </tr>
+            <tr>
+                <td>Подтверждение пароля:</td>
+                <td><input asp-for="@Model.UserConfirmPassword" type="password" /></td>
+            </tr>
+        </table>
+        <input type="submit" />
+    </form>
+</div>

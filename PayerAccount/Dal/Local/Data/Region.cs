@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PayerAccount.Models.Local
+namespace PayerAccount.Dal.Local.Data
 {
     public class Region
     {

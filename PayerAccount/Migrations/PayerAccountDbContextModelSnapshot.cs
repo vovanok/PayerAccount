@@ -18,7 +18,7 @@ namespace PayerAccount.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.2-rtm-10011");
 
-            modelBuilder.Entity("PayerAccount.Models.Local.Department", b =>
+            modelBuilder.Entity("PayerAccount.Dal.Local.Data.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -38,7 +38,7 @@ namespace PayerAccount.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("PayerAccount.Models.Local.Region", b =>
+            modelBuilder.Entity("PayerAccount.Dal.Local.Data.Region", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -50,7 +50,7 @@ namespace PayerAccount.Migrations
                     b.ToTable("Regions");
                 });
 
-            modelBuilder.Entity("PayerAccount.Models.Local.User", b =>
+            modelBuilder.Entity("PayerAccount.Dal.Local.Data.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -59,9 +59,9 @@ namespace PayerAccount.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Number");
+                    b.Property<int>("Number");
 
-                    b.Property<string>("Password");
+                    b.Property<string>("PasswordHash");
 
                     b.HasKey("Id");
 
@@ -70,17 +70,17 @@ namespace PayerAccount.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PayerAccount.Models.Local.Department", b =>
+            modelBuilder.Entity("PayerAccount.Dal.Local.Data.Department", b =>
                 {
-                    b.HasOne("PayerAccount.Models.Local.Region", "Region")
+                    b.HasOne("PayerAccount.Dal.Local.Data.Region", "Region")
                         .WithMany("Departments")
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("PayerAccount.Models.Local.User", b =>
+            modelBuilder.Entity("PayerAccount.Dal.Local.Data.User", b =>
                 {
-                    b.HasOne("PayerAccount.Models.Local.Department", "Department")
+                    b.HasOne("PayerAccount.Dal.Local.Data.Department", "Department")
                         .WithMany("Users")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade);

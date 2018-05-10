@@ -40,6 +40,7 @@ namespace PayerAccount.Dal.Remote
                 }
 
                 // Common payer information
+                string name = string.Empty;
                 string address = string.Empty;
                 using (var command = GetDbCommandByQuery(
                     $"select * from r090$print({payerNumber}, {currentDate.GetFinancialPeriod()});"))
@@ -53,9 +54,8 @@ namespace PayerAccount.Dal.Remote
                         if (payerState == 4) // Closed status
                             return null;
 
+                        name = reader.GetFieldFromReader<string>("customer_name");
                         address = reader.GetFieldFromReader<string>("customer_address");
-                        
-                        // TODO: get other payer information
                     }
 
                     command.Transaction.Commit();
@@ -137,7 +137,9 @@ namespace PayerAccount.Dal.Remote
                     command.Transaction.Commit();
                 }
 
-                return new PayerState(address, balance, dayValue, nightValue, counterName, counterCheckDate, counterMountDate);
+                return new PayerState(
+                    name, address, balance, dayValue, nightValue,
+                    counterName, counterCheckDate, counterMountDate);
             }
             catch (Exception ex)
             {

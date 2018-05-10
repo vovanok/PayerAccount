@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PayerAccount.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,8 +51,8 @@ namespace PayerAccount.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     DepartmentId = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Number = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true)
+                    Number = table.Column<int>(nullable: false),
+                    PasswordHash = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

@@ -2,8 +2,9 @@
 
 namespace PayerAccount.Models.Remote
 {
-    internal class PayerState
+    public class PayerState
     {
+        public string Name { get; private set; }
         public string Address { get; private set; }
         public decimal Balance { get; private set; }
         public int DayValue { get; private set; }
@@ -13,10 +14,11 @@ namespace PayerAccount.Models.Remote
         public DateTime CounterMountDate { get; private set; }
 
         public PayerState(
-            string address, decimal balance, int dayValue,
-            int nightValue, string counterName,
+            string name, string address, decimal balance,
+            int dayValue, int nightValue, string counterName,
             DateTime counterCheckDate, DateTime counterMountDate)
         {
+            Name = name;
             Address = address;
             Balance = balance;
             DayValue = dayValue;

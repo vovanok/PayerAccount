@@ -1,0 +1,42 @@
+﻿@model MainViewModel
+
+@{
+    ViewData["Title"] = "Main";
+}
+
+<div class="row">
+    <table>
+        <tr>
+            <td>Номер ЛС:</td>
+            <td>@Model.UserNumber</td>
+        </tr>
+        <tr>
+            <td>Имя:</td>
+            <td>@Model.UserName</td>
+        </tr>
+        <tr>
+            <td>Сальдо:</td>
+            <td>@Model.UserBalance.ToString("0.00")</td>
+        </tr>
+        <tr>
+            <td>Дневное показание:</td>
+            <td>@Model.UserDayCounterValue</td>
+        </tr>
+        <tr>
+            <td>Ночное показание:</td>
+            <td>@Model.UserNightCounterValue</td>
+        </tr>
+        <tr>
+            <td>Название счетчика:</td>
+            <td>@Model.UserCounterName</td>
+        </tr>
+        <tr>
+            <td>Дата установки счетчика:</td>
+            <td>@Model.UserCounterMountDate</td>
+        </tr>
+        <tr>
+            <td>Дата поверки счетчика:</td>
+            <td>@Model.UserCounterCheckDate</td>
+        </tr>
+    </table>
+</div>
