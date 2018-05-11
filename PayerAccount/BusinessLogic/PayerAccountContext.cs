@@ -11,22 +11,26 @@ using PayerAccount.Dal.Remote;
 using PayerAccount.Dal.Local;
 using PayerAccount.Dal.Local.Data;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 
 namespace PayerAccount.BusinessLogic
 {
     public class PayerAccountContext : IPayerAccountContext
     {
-        private readonly PayerAccountDbContext localDb = new PayerAccountDbContext();
+        private readonly PayerAccountDbContext localDb;
         private readonly IPasswordHasher<User> passwordHasher = new PasswordHasher<User>();
 
-        public bool IsLogin { get; private set; }
+        public UserSessionState GetSessionState(HttpContext httpContext)
+        {
+            return httpContext.GetUserSessionState();
+        }
+
+        public PayerAccountContext(PayerAccountDbContext localDb)
+        {
+            this.localDb = localDb;
+        }
 
         public MainViewModel GetCurrentMainViewModel(HttpContext httpContext)
         {
-            if (!IsLogin)
-                return null;
-
             var userSessionState = httpContext.GetUserSessionState();
             if (userSessionState == null)
                 return null;
@@ -46,30 +50,35 @@ namespace PayerAccount.BusinessLogic
 
         public LoginViewModel GetEmptyLoginModel()
         {
+            var regions = localDb.Regions;
+
             return new LoginViewModel
             {
-                Regions = GetRegionsSelectItems()
+                PayerPassword = string.Empty,
+                Regions = regions.Select(region => new SelectListItem { Value = region.Id.ToString(), Text = region.Name }),
+                RegionId = regions.FirstOrDefault()?.Id ?? default(int)
             };
         }
 
         public RegistrateViewModel GetEmptyRegistrateModel()
         {
+            var regions = localDb.Regions;
+
             return new RegistrateViewModel
             {
-                Regions = GetRegionsSelectItems()
+                UserPassword = string.Empty,
+                UserConfirmPassword = string.Empty,
+                Regions = regions.Select(region => new SelectListItem { Value = region.Id.ToString(), Text = region.Name }),
+                UserRegionId = regions.FirstOrDefault()?.Id ?? default(int)
             };
         }
 
         public void Login(LoginViewModel loginModel, HttpContext httpContext)
         {
-            if (IsLogin)
+            if (GetSessionState(httpContext) != null)
                 throw new Exception("User already login");
 
-            var localUser = localDb.Users.FirstOrDefault(
-                user =>
-                    user.Number == loginModel.PayerNumber &&
-                    user.Department.RegionId == loginModel.RegionId);
-
+            var localUser = FindUser(loginModel.PayerNumber, loginModel.RegionId);
             if (localUser == null)
                 throw new Exception("User is not registered");
 
@@ -77,12 +86,24 @@ namespace PayerAccount.BusinessLogic
             if (passwordCheckResult != PasswordVerificationResult.Success)
                 throw new Exception("Password is not valid");
 
-            var payerRepository = GetPayerRepository(localUser.Department.Url, localUser.Department.Path);
+            var department = localDb.Departments.FirstOrDefault(item => item.Id == localUser.DepartmentId);
+            if (department == null)
+                throw new Exception("User department is not found");
+
+            var payerRepository = GetPayerRepository(department.Url, department.Path);
             var payerState = payerRepository.Get(localUser.Number);
             if (payerState == null)
                 throw new Exception("Remote user is not exist");
 
             httpContext.SetUserSessionState(new UserSessionState(localUser, payerState));
+        }
+
+        public void Logout(HttpContext httpContext)
+        {
+            if (GetSessionState(httpContext) == null)
+                throw new Exception("Already logout");
+
+            httpContext?.SetUserSessionState(null);
         }
 
         public void Registrate(RegistrateViewModel registrateModel)
@@ -105,9 +126,11 @@ namespace PayerAccount.BusinessLogic
             if (existUser != null)
                 throw new Exception("User already exist");
 
+            var departments = localDb.Departments.Where(department => department.RegionId == targetRegion.Id);
+            
             PayerState targetPayerState = null;
             Department targetDepartment = null;
-            foreach (var department in targetRegion.Departments)
+            foreach (var department in departments)
             {
                 var payerRepository = GetPayerRepository(department.Url, department.Path);
                 targetPayerState = payerRepository.Get(registrateModel.UserNumber);
@@ -141,15 +164,13 @@ namespace PayerAccount.BusinessLogic
 
         private User FindUser(int userNumber, int regionId)
         {
+            var departments = localDb.Departments
+                .Where(item => item.RegionId == regionId)
+                .Select(item => item.Id);
+
             return localDb.Users.FirstOrDefault(user =>
                 user.Number == userNumber &&
-                user.Department.RegionId == regionId);
-        }
-
-        private IEnumerable<SelectListItem> GetRegionsSelectItems()
-        {
-            return localDb.Regions.Select(
-                region => new SelectListItem { Value = region.Id.ToString(), Text = region.Name });
+                departments.Contains(user.DepartmentId));
         }
     }
 }

@@ -9,8 +9,8 @@ namespace PayerAccount.Dal.Local
         public DbSet<Department> Departments { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public PayerAccountDbContext()
-            : base()
+        public PayerAccountDbContext(DbContextOptions options)
+            : base(options)
         {
         }
     }

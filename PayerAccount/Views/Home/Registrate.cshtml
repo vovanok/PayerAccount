@@ -10,19 +10,19 @@
         <table>
             <tr>
                 <td>Номер лицевого счета:</td>
-                <td><input asp-for="@Model.UserNumber" type="text" /></td>
+                <td><input asp-for="UserNumber" type="text" /></td>
             </tr>
             <tr>
                 <td>Регион:</td>
-                <td><select asp-for="@Model.UserRegionId" asp-items="@Model.Regions" /></td>
+                <td><select asp-for="UserRegionId" asp-items="Model.Regions"></select></td>
             </tr>
             <tr>
                 <td>Пароль:</td>
-                <td><input asp-for="@Model.UserPassword" type="password" /></td>
+                <td><input asp-for="UserPassword" type="password" /></td>
             </tr>
             <tr>
                 <td>Подтверждение пароля:</td>
-                <td><input asp-for="@Model.UserConfirmPassword" type="password" /></td>
+                <td><input asp-for="UserConfirmPassword" type="password" /></td>
             </tr>
         </table>
         <input type="submit" />

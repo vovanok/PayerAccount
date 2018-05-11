@@ -33,3 +33,14 @@
         display: none;
     }
 }
+
+button,
+input,
+select {
+    width: 200px;
+    height: 30px;
+}
+
+span.error_message {
+    color: #ff0000;
+}

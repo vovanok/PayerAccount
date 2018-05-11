@@ -10,8 +10,5 @@ namespace PayerAccount.Dal.Local.Data
         public string Path { get; set; }
 
         public int RegionId { get; set; }
-        public Region Region { get; set; }
-
-        public List<User> Users { get; set; }
     }
 }

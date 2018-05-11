@@ -17,16 +17,17 @@ namespace PayerAccount.Controllers
 
         public IActionResult Index()
         {
-            if (context.IsLogin)
-                return Main();
+            if (context.GetSessionState(HttpContext) != null)
+                return RedirectToAction("Main");
 
-            return Login();
+            return RedirectToAction("Login");
         }
 
         [AcceptVerbs("get")]
         public IActionResult Login()
         {
-            return View(context.GetEmptyLoginModel());
+            var loginModel = context.GetEmptyLoginModel();
+            return View(loginModel);
         }
 
         [AcceptVerbs("post")]
@@ -35,18 +36,34 @@ namespace PayerAccount.Controllers
             try
             {
                 context.Login(loginModel, HttpContext);
-                return Main();
+                return RedirectToAction("Main");
             }
             catch (Exception ex)
             {
-                return Message($"Login failed: {ex.Message}");
+                return OpenMessagePage(
+                    new MessageViewModel { Message = $"Login failed: {ex.Message}", IsError = true });
+            }
+        }
+
+        public IActionResult Logout()
+        {
+            try
+            {
+                context.Logout(HttpContext);
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                return OpenMessagePage(
+                    new MessageViewModel { Message = $"Logout failed: {ex.Message}", IsError = true });
             }
         }
 
         [AcceptVerbs("get")]
         public IActionResult Registrate()
         {
-            return View(context.GetEmptyRegistrateModel());
+            var registrateModel = context.GetEmptyRegistrateModel();
+            return View(registrateModel);
         }
 
         [AcceptVerbs("post")]
@@ -55,49 +72,36 @@ namespace PayerAccount.Controllers
             try
             {
                 context.Registrate(registrateModel);
-                return Message($"Registration success");
+                return OpenMessagePage(new MessageViewModel { Message = $"Registration success" });
             }
             catch (Exception ex)
             {
-                return Message($"Registration failed: {ex.Message}");
+                return OpenMessagePage(new MessageViewModel { Message = $"Registration failed: {ex.Message}", IsError = true });
             }
         }
 
         public IActionResult Main()
         {
-            if (!context.IsLogin)
-                return Login();
-
             var mainModel = context.GetCurrentMainViewModel(HttpContext);
             if (mainModel == null)
-                return Login();
+                return RedirectToAction("Login");
 
             return View(mainModel);
         }
 
-        public IActionResult Message(string message)
+        public IActionResult Message(MessageViewModel messageModel)
         {
-            return View(message ?? string.Empty);
-        }
-
-        //
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
+            return View(messageModel);
         }
 
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private IActionResult OpenMessagePage(MessageViewModel messageModel)
+        {
+            return RedirectToAction("Message", "Home", messageModel);
         }
     }
 }

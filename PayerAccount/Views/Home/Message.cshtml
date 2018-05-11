@@ -1,0 +1,8 @@
+﻿@model MessageViewModel
+
+@{
+    ViewData["Title"] = "Message";
+}
+
+<h2>Message</h2>
+<span class="@(Model.IsError ? "error_message" : string.Empty)">@Model.Message</span>

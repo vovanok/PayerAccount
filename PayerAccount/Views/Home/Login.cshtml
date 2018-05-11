@@ -1,25 +1,26 @@
-﻿@{
+﻿@model LoginViewModel
+
+@{
     ViewData["Title"] = "Login";
 }
 
-@model LoginViewModel
-
+<h2>Login</h2>
 <div class="row">
     <form method="post" action="/Home/Login">
         <table>
             <tr>
                 <td>Номер лицевого счета:</td>
-                <td><input asp-for="@Model.PayerNumber" type="text"/></td>
+                <td><input asp-for="PayerNumber" type="text" /></td>
             </tr>
             <tr>
                 <td>Регион:</td>
-                <td><select asp-for="@Model.RegionId" asp-items="@Model.Regions"/></td>
+                <td><select asp-for="RegionId" asp-items="Model.Regions"></select></td>
             </tr>
             <tr>
                 <td>Пароль:</td>
-                <td><input asp-for="@Model.PayerPassword" type="password"/></td>
+                <td><input asp-for="PayerPassword" type="password" /></td>
             </tr>
         </table>
-        <input type="submit"/>
+        <input type="submit" />
     </form>
 </div>
