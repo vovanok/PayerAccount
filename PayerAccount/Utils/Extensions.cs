@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using Microsoft.AspNetCore.Http;
+using NetOffice.ExcelApi;
 using Newtonsoft.Json;
 using PayerAccount.BusinessLogic;
 
@@ -43,6 +44,18 @@ namespace PayerAccount.Utils
         public static void SetUserSessionState(this HttpContext httpContext, UserSessionState sessionState)
         {
             httpContext.Session.Set<UserSessionState>("user", sessionState);
+        }
+
+        public static void SetToPlaceholder(this Worksheet worksheet, int placeholderNumber, object value)
+        {
+            foreach (var cell in worksheet.Cells)
+            {
+                var oldValue = cell.Value.ToString();
+                if (cell.Value.ToString().Contains($"{{{placeholderNumber}}}"))
+                {
+                    cell.Value = string.Format(oldValue, value);
+                }
+            }
         }
     }
 }

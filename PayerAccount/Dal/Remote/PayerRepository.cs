@@ -42,6 +42,37 @@ namespace PayerAccount.Dal.Remote
                 // Common payer information
                 string name = string.Empty;
                 string address = string.Empty;
+                decimal totalFloorSpace;
+                int registratedCount;
+                int roomCount;
+                int zipCode;
+                int rateVolume;
+                decimal beginBalance;
+                decimal endBalance;
+                int defaultDeltaVolume;
+                int dayDeltaVolume;
+                int nightDeltaVolume;
+                decimal defaultTariff;
+                decimal dayTariff;
+                decimal nightTariff;
+                int defaultPublicspaceVolume;
+                int dayPublicspaceVolume;
+                int nightPublicspaceVolume;
+                decimal defaultPublicspaceTariff;
+                decimal dayPublicspaceTariff;
+                decimal nightPublicspaceTariff;
+                decimal estimateTotal;
+                decimal estimatePublicspaceTotal;
+                decimal adjustmentTotal;
+                decimal paymentTotal;
+                decimal groupTotalFloorSpace;
+                decimal defaultEnergyTariff;
+                decimal dayEnergyTariff;
+                decimal nightEnergyTariff;
+                decimal defaultTransferTariff;
+                decimal dayTransferTariff;
+                decimal nightTransferTariff;
+                    
                 using (var command = GetDbCommandByQuery(
                     $"select * from r090$print({payerNumber}, {currentDate.GetFinancialPeriod()});"))
                 {
@@ -56,6 +87,36 @@ namespace PayerAccount.Dal.Remote
 
                         name = reader.GetFieldFromReader<string>("customer_name");
                         address = reader.GetFieldFromReader<string>("customer_address");
+                        totalFloorSpace = reader.GetFieldFromReader<decimal>("total_area");
+                        registratedCount = reader.GetFieldFromReader<int>("registered_count");
+                        roomCount = reader.GetFieldFromReader<int>("room_count");
+                        zipCode = reader.GetFieldFromReader<int>("zip_code");
+                        rateVolume = reader.GetFieldFromReader<int>("rate_volume");
+                        beginBalance = reader.GetFieldFromReader<decimal>("begin_balance");
+                        endBalance = reader.GetFieldFromReader<decimal>("end_balance");
+                        defaultDeltaVolume = reader.GetFieldFromReader<int>("default_delta_kwh");
+                        dayDeltaVolume = reader.GetFieldFromReader<int>("day_delta_kwh");
+                        nightDeltaVolume = reader.GetFieldFromReader<int>("night_delta_kwh");
+                        defaultTariff = reader.GetFieldFromReader<decimal>("default_tariff_value");
+                        dayTariff = reader.GetFieldFromReader<decimal>("day_tariff_value");
+                        nightTariff = reader.GetFieldFromReader<decimal>("night_tariff_value");
+                        defaultPublicspaceVolume = reader.GetFieldFromReader<int>("publicspace_default_kwh");
+                        dayPublicspaceVolume = reader.GetFieldFromReader<int>("publicspace_day_kwh");
+                        nightPublicspaceVolume = reader.GetFieldFromReader<int>("publicspace_night_kwh");
+                        defaultPublicspaceTariff = reader.GetFieldFromReader<decimal>("publicspace_default_tariff");
+                        dayPublicspaceTariff = reader.GetFieldFromReader<decimal>("publicspace_day_tariff");
+                        nightPublicspaceTariff = reader.GetFieldFromReader<decimal>("publicspace_night_tariff");
+                        estimateTotal = reader.GetFieldFromReader<decimal>("estimate_value");
+                        estimatePublicspaceTotal = reader.GetFieldFromReader<decimal>("publicspace_estimate");
+                        adjustmentTotal = reader.GetFieldFromReader<decimal>("adjustment_value");
+                        paymentTotal = reader.GetFieldFromReader<decimal>("PAYMENT_value");
+                        groupTotalFloorSpace = reader.GetFieldFromReader<decimal>("GROUP_TOTAL_AREA");
+                        defaultEnergyTariff = reader.GetFieldFromReader<decimal>("default_ENERGY_TARIFF");
+                        dayEnergyTariff = reader.GetFieldFromReader<decimal>("DAY_ENERGY_TARIFF");
+                        nightEnergyTariff = reader.GetFieldFromReader<decimal>("NIGHT_ENERGY_TARIFF");
+                        defaultTransferTariff = reader.GetFieldFromReader<decimal>("default_TRANSFER_TARIFF");
+                        dayTransferTariff = reader.GetFieldFromReader<decimal>("DAY_TRANSFER_TARIFF");
+                        nightTransferTariff = reader.GetFieldFromReader<decimal>("NIGHT_TRANSFER_TARIFF");
                     }
 
                     command.Transaction.Commit();
@@ -138,8 +199,14 @@ namespace PayerAccount.Dal.Remote
                 }
 
                 return new PayerState(
-                    name, address, balance, dayValue, nightValue,
-                    counterName, counterCheckDate, counterMountDate);
+                    balance, dayValue, nightValue, counterName, counterCheckDate, counterMountDate,
+                    name, address, totalFloorSpace, registratedCount, roomCount, zipCode, rateVolume,
+                    beginBalance, endBalance, defaultDeltaVolume, dayDeltaVolume, nightDeltaVolume,
+                    defaultTariff, dayTariff, nightTariff, defaultPublicspaceVolume, dayPublicspaceVolume,
+                    nightPublicspaceVolume, defaultPublicspaceTariff, dayPublicspaceTariff, nightPublicspaceTariff,
+                    estimateTotal, estimatePublicspaceTotal, adjustmentTotal, paymentTotal, groupTotalFloorSpace,
+                    defaultEnergyTariff, dayEnergyTariff, nightEnergyTariff, defaultTransferTariff,
+                    dayTransferTariff, nightTransferTariff);
             }
             catch (Exception ex)
             {

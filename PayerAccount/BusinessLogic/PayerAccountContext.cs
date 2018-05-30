@@ -11,6 +11,9 @@ using PayerAccount.Dal.Remote;
 using PayerAccount.Dal.Local;
 using PayerAccount.Dal.Local.Data;
 using System.Collections.Generic;
+using System.IO;
+using NetOffice.ExcelApi;
+using NetOffice.ExcelApi.Enums;
 
 namespace PayerAccount.BusinessLogic
 {
@@ -171,6 +174,38 @@ namespace PayerAccount.BusinessLogic
             return localDb.Users.FirstOrDefault(user =>
                 user.Number == userNumber &&
                 departments.Contains(user.DepartmentId));
+        }
+
+        public string GetPaymentReceiptPath(HttpContext httpContext)
+        {
+            var templateFullpath = Path.Combine(Environment.CurrentDirectory, Config.PaymentReceiptTemplateFilename);
+            if (!File.Exists(templateFullpath))
+                throw new Exception($"Template is not exist.");
+
+            var sessionState = GetSessionState(httpContext);
+            if (sessionState == null)
+                return null;
+
+            using (var application = new Application())
+            {
+                using (var workbook = application.Workbooks.Add(templateFullpath))
+                {
+                    var worksheet = (Worksheet)workbook.Worksheets[1];
+
+                    worksheet.SetToPlaceholder(0, sessionState.PayerState.ZipCode);
+                    worksheet.SetToPlaceholder(1, sessionState.User.Number);
+                    worksheet.SetToPlaceholder(2, sessionState.User.Name);
+                    worksheet.SetToPlaceholder(3, sessionState.PayerState.Address);
+
+                    var receiptFolder = Path.Combine("PaymentReceipts", sessionState.User.Id.ToString());
+                    if (!Directory.Exists(receiptFolder))
+                        Directory.CreateDirectory(receiptFolder);
+
+                    var filenameForSave = Path.Combine(receiptFolder, Guid.NewGuid().ToString() + ".pdf");
+                    worksheet.ExportAsFixedFormat(XlFixedFormatType.xlTypePDF, filenameForSave, XlFixedFormatQuality.xlQualityStandard);
+                    return filenameForSave;
+                }
+            }
         }
     }
 }

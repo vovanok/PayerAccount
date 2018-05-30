@@ -12,5 +12,6 @@ namespace PayerAccount.BusinessLogic
         void Logout(HttpContext httpContext);
         void Registrate(RegistrateViewModel registrateModel);
         MainViewModel GetCurrentMainViewModel(HttpContext httpContext);
+        string GetPaymentReceiptPath(HttpContext httpContext);
     }
 }

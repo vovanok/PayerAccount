@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PayerAccount.Models;
 using PayerAccount.BusinessLogic;
 using System;
+using System.IO;
 
 namespace PayerAccount.Controllers
 {
@@ -87,6 +88,26 @@ namespace PayerAccount.Controllers
                 return RedirectToAction("Login");
 
             return View(mainModel);
+        }
+
+        public IActionResult GetPaymentReceipt()
+        {
+            try
+            {
+                var receiptPath = context.GetPaymentReceiptPath(HttpContext);
+                if (string.IsNullOrEmpty(receiptPath))
+                    return RedirectToAction("Login");
+
+                using (var fileStream = new FileStream(receiptPath, FileMode.Open))
+                {
+                    return new FileStreamResult(fileStream, "application/pdf");
+                }
+            }
+            catch (Exception ex)
+            {
+                return OpenMessagePage(
+                    new MessageViewModel { Message = $"Get payment receipt failed: {ex.Message}", IsError = true });
+            }
         }
 
         public IActionResult Message(MessageViewModel messageModel)

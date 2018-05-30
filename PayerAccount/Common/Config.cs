@@ -19,6 +19,7 @@ namespace PayerAccount.Common
 
         public static string RemoteDbUser => GetAppSettingByKey("remoteDbUser", string.Empty);
         public static string RemoteDbPassword => GetAppSettingByKey("remoteDbPassword", string.Empty);
+        public static string PaymentReceiptTemplateFilename => GetAppSettingByKey("paymentReceiptTemplateFilename", string.Empty);
 
         private static string GetAppSettingByKey(string key, string defaultValue)
         {
