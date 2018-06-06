@@ -98,10 +98,8 @@ namespace PayerAccount.Controllers
                 if (string.IsNullOrEmpty(receiptPath))
                     return RedirectToAction("Login");
 
-                using (var fileStream = new FileStream(receiptPath, FileMode.Open))
-                {
-                    return new FileStreamResult(fileStream, "application/pdf");
-                }
+                var receiptContent = System.IO.File.ReadAllText(receiptPath);
+                return Content(receiptContent, "text/html");
             }
             catch (Exception ex)
             {

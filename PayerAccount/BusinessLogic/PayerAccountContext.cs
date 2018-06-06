@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -10,10 +11,6 @@ using PayerAccount.Models.Remote;
 using PayerAccount.Dal.Remote;
 using PayerAccount.Dal.Local;
 using PayerAccount.Dal.Local.Data;
-using System.Collections.Generic;
-using System.IO;
-using NetOffice.ExcelApi;
-using NetOffice.ExcelApi.Enums;
 
 namespace PayerAccount.BusinessLogic
 {
@@ -178,34 +175,56 @@ namespace PayerAccount.BusinessLogic
 
         public string GetPaymentReceiptPath(HttpContext httpContext)
         {
-            var templateFullpath = Path.Combine(Environment.CurrentDirectory, Config.PaymentReceiptTemplateFilename);
-            if (!File.Exists(templateFullpath))
-                throw new Exception($"Template is not exist.");
-
             var sessionState = GetSessionState(httpContext);
             if (sessionState == null)
                 return null;
 
-            using (var application = new Application())
-            {
-                using (var workbook = application.Workbooks.Add(templateFullpath))
-                {
-                    var worksheet = (Worksheet)workbook.Worksheets[1];
+            var templateFullpath = Path.Combine(Environment.CurrentDirectory, Config.PaymentReceiptTemplateFilename);
+            if (!File.Exists(templateFullpath))
+                throw new Exception($"Template is not exist.");
 
-                    worksheet.SetToPlaceholder(0, sessionState.PayerState.ZipCode);
-                    worksheet.SetToPlaceholder(1, sessionState.User.Number);
-                    worksheet.SetToPlaceholder(2, sessionState.User.Name);
-                    worksheet.SetToPlaceholder(3, sessionState.PayerState.Address);
+            var receiptDocumentWorker = new ReceiptDocumentWorker(templateFullpath);
+            receiptDocumentWorker.PutToPlaceholder(11, sessionState.PayerState.ZipCode.ToString());
+            receiptDocumentWorker.PutToPlaceholder(0, sessionState.User.Number.ToString());
+            receiptDocumentWorker.PutToPlaceholder(4, sessionState.User.Name);
+            receiptDocumentWorker.PutToPlaceholder(5, sessionState.PayerState.Address);
+            receiptDocumentWorker.PutToPlaceholder(8, sessionState.PayerState.TotalFloorSpace.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(9, sessionState.PayerState.RegistratedCount.ToString());
+            receiptDocumentWorker.PutToPlaceholder(10, sessionState.PayerState.RoomCount.ToString());
+            receiptDocumentWorker.PutToPlaceholder(32, sessionState.PayerState.EndBalance.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(13, sessionState.PayerState.BeginBalance.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(14, sessionState.PayerState.DefaultDeltaVolume.ToString());
+            receiptDocumentWorker.PutToPlaceholder(16, sessionState.PayerState.DayDeltaVolume.ToString());
+            receiptDocumentWorker.PutToPlaceholder(18, sessionState.PayerState.NightDeltaVolume.ToString());
+            receiptDocumentWorker.PutToPlaceholder(15, sessionState.PayerState.DefaultTariff.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(17, sessionState.PayerState.DayTariff.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(19, sessionState.PayerState.NightTariff.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(20, sessionState.PayerState.DefaultPublicspaceVolume.ToString());
+            receiptDocumentWorker.PutToPlaceholder(22, sessionState.PayerState.DayPublicspaceVolume.ToString());
+            receiptDocumentWorker.PutToPlaceholder(24, sessionState.PayerState.NightPublicspaceVolume.ToString());
+            receiptDocumentWorker.PutToPlaceholder(21, sessionState.PayerState.DefaultPublicspaceTariff.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(23, sessionState.PayerState.DayPublicspaceTariff.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(25, sessionState.PayerState.NightPublicspaceTariff.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(27, sessionState.PayerState.EstimateTotal.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(28, sessionState.PayerState.EstimatePublicspaceTotal.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(30, sessionState.PayerState.AdjustmentTotal.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(31, sessionState.PayerState.PaymentTotal.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(46, sessionState.PayerState.GroupTotalFloorSpace.ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(12, sessionState.PayerState.RateVolume.ToString());
+            receiptDocumentWorker.PutToPlaceholder(37, (sessionState.PayerState.DayEnergyTariff / sessionState.PayerState.NightEnergyTariff).ToString("0.00"));
+            receiptDocumentWorker.PutToPlaceholder(38, (sessionState.PayerState.DayTransferTariff / sessionState.PayerState.NightTransferTariff).ToString("0.00"));
 
-                    var receiptFolder = Path.Combine("PaymentReceipts", sessionState.User.Id.ToString());
-                    if (!Directory.Exists(receiptFolder))
-                        Directory.CreateDirectory(receiptFolder);
+            var receiptFolder = Path.Combine("PaymentReceipts", sessionState.User.Id.ToString());
+            if (!Directory.Exists(receiptFolder))
+                Directory.CreateDirectory(receiptFolder);
 
-                    var filenameForSave = Path.Combine(receiptFolder, Guid.NewGuid().ToString() + ".pdf");
-                    worksheet.ExportAsFixedFormat(XlFixedFormatType.xlTypePDF, filenameForSave, XlFixedFormatQuality.xlQualityStandard);
-                    return filenameForSave;
-                }
-            }
+            var filenameForSave = Path.Combine(receiptFolder, Guid.NewGuid().ToString() + ".htm");
+            if (File.Exists(filenameForSave))
+                File.Delete(filenameForSave);
+
+            receiptDocumentWorker.Save(filenameForSave);
+
+            return filenameForSave;
         }
     }
 }
