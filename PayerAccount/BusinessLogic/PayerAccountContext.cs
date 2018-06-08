@@ -185,7 +185,8 @@ namespace PayerAccount.BusinessLogic
 
             var receiptDocumentWorker = new ReceiptDocumentWorker(templateFullpath);
             receiptDocumentWorker.PutToPlaceholder(11, sessionState.PayerState.ZipCode.ToString());
-            receiptDocumentWorker.PutToPlaceholder(0, sessionState.User.Number.ToString());
+            receiptDocumentWorker.PutToPlaceholder(1, sessionState.User.Number.ToString());
+            receiptDocumentWorker.PutToPlaceholder(2, "???");
             receiptDocumentWorker.PutToPlaceholder(4, sessionState.User.Name);
             receiptDocumentWorker.PutToPlaceholder(5, sessionState.PayerState.Address);
             receiptDocumentWorker.PutToPlaceholder(8, sessionState.PayerState.TotalFloorSpace.ToString("0.00"));
