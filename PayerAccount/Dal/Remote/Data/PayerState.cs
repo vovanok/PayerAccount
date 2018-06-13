@@ -1,7 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PayerAccount.Models.Remote
 {
+    public class PayerCounterValue
+    {
+        public int DayValue { get; private set; }
+        public int NightValue { get; private set; }
+        public DateTime RecieveDate { get; private set; }
+
+        public PayerCounterValue(int dayValue, int nightValue, DateTime recieveDate)
+        {
+            DayValue = dayValue;
+            NightValue = nightValue;
+            RecieveDate = recieveDate;
+        }
+    }
+    public class PayerPaymentExtracharge
+    {
+        public DateTime EntryDate { get; private set; }
+        public string PeriodAsString { get; private set; }
+        public int DayValue { get; private set; }
+        public int DayKwh { get; private set; }
+        public int NightValue { get; private set; }
+        public int NightKwh { get; private set; }
+        public decimal EstimateValue { get; private set; }
+        public decimal FacilityValue { get; private set; }
+        public decimal PaymentValue { get; private set; }
+        public decimal Balance { get; private set; }
+
+        public PayerPaymentExtracharge(DateTime entryDate, string periodAsString, int dayValue, int dayKwh, int nightValue, int nightKwh, decimal estimateValue, decimal facilityValue, decimal paymentValue, decimal balance)
+        {
+            EntryDate = entryDate;
+            PeriodAsString = periodAsString;
+            DayValue = dayValue;
+            DayKwh = dayKwh;
+            NightValue = nightValue;
+            NightKwh = nightKwh;
+            EstimateValue=estimateValue;
+            FacilityValue = facilityValue;
+            PaymentValue = paymentValue;
+            Balance = balance;
+        }
+    }
+
     public class PayerState
     {
         public decimal Balance { get; private set; }
@@ -27,7 +69,7 @@ namespace PayerAccount.Models.Remote
         public int RoomCount { get; private set; }
 
         // Zip code (11, ZIP_CODE)
-        public int ZipCode { get; private set; }
+        public string ZipCode { get; private set; }
 
         // Норматив 104 кВт * ч на 1 чел (12, RATE_VOLUME)
         public int RateVolume { get; private set; }
@@ -107,6 +149,12 @@ namespace PayerAccount.Models.Remote
         // (44, NIGHT_TRANSFER_TARIFF)
         public decimal NightTransferTariff { get; private set; }
 
+        // 10 first counterValues
+        public List<PayerCounterValue> PayerCounterValues { get; private set; }
+
+        //Extrachrges and payments
+        public List<PayerPaymentExtracharge> PayerPaymentExtracharges { get; private set; }
+
         public PayerState(
             decimal balance,
             int dayValue,
@@ -119,7 +167,7 @@ namespace PayerAccount.Models.Remote
             decimal totalFloorSpace, 
             int registratedCount, 
             int roomCount,
-            int zipCode,
+            string zipCode,
             int rateVolume,
             decimal beginBalance,
             decimal endBalance,
@@ -145,7 +193,9 @@ namespace PayerAccount.Models.Remote
             decimal nightEnergyTariff, 
             decimal defaultTransferTariff, 
             decimal dayTransferTariff,
-            decimal nightTransferTariff)
+            decimal nightTransferTariff,
+            List<PayerCounterValue> payerCounterValues,
+            List<PayerPaymentExtracharge> payerPaymentExtracharges)
         {
             Balance = balance;
             DayValue = dayValue;
@@ -185,6 +235,8 @@ namespace PayerAccount.Models.Remote
             DefaultTransferTariff = defaultTransferTariff;
             DayTransferTariff = dayTransferTariff;
             NightTransferTariff = nightTransferTariff;
+            PayerCounterValues = payerCounterValues;
+            PayerPaymentExtracharges = payerPaymentExtracharges;
         }
     }
 }
