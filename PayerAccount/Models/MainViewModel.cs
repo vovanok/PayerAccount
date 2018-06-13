@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using PayerAccount.Models.Remote;
+using PayerAccount.Dal.Remote.Data;
 
 namespace PayerAccount.Models
 {

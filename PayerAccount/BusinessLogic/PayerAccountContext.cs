@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PayerAccount.Utils;
 using PayerAccount.Common;
 using PayerAccount.Models;
-using PayerAccount.Models.Remote;
+using PayerAccount.Dal.Remote.Data;
 using PayerAccount.Dal.Remote;
 using PayerAccount.Dal.Local;
 using PayerAccount.Dal.Local.Data;

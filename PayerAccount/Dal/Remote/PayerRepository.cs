@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using FirebirdSql.Data.FirebirdClient;
 using PayerAccount.Utils;
-using PayerAccount.Models.Remote;
+using PayerAccount.Dal.Remote.Data;
 using System.Collections.Generic;
 
 [assembly: InternalsVisibleTo("PayerAccount.Test")]
