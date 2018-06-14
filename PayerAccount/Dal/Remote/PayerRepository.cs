@@ -4,7 +4,8 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using FirebirdSql.Data.FirebirdClient;
 using PayerAccount.Utils;
-using PayerAccount.Models.Remote;
+using PayerAccount.Dal.Remote.Data;
+using System.Collections.Generic;
 
 [assembly: InternalsVisibleTo("PayerAccount.Test")]
 namespace PayerAccount.Dal.Remote
@@ -45,7 +46,7 @@ namespace PayerAccount.Dal.Remote
                 decimal totalFloorSpace;
                 int registratedCount;
                 int roomCount;
-                int zipCode;
+                string zipCode= string.Empty;
                 int rateVolume;
                 decimal beginBalance;
                 decimal endBalance;
@@ -72,7 +73,9 @@ namespace PayerAccount.Dal.Remote
                 decimal defaultTransferTariff;
                 decimal dayTransferTariff;
                 decimal nightTransferTariff;
-                    
+                List<PayerCounterValue> payerCounterValues = new List<PayerCounterValue>();
+                List<PayerPaymentExtracharge> payerPaymentExtracharges = new List<PayerPaymentExtracharge>();
+
                 using (var command = GetDbCommandByQuery(
                     $"select * from r090$print({payerNumber}, {currentDate.GetFinancialPeriod()});"))
                 {
@@ -90,7 +93,7 @@ namespace PayerAccount.Dal.Remote
                         totalFloorSpace = reader.GetFieldFromReader<decimal>("total_area");
                         registratedCount = reader.GetFieldFromReader<int>("registered_count");
                         roomCount = reader.GetFieldFromReader<int>("room_count");
-                        zipCode = reader.GetFieldFromReader<int>("zip_code");
+                        zipCode = reader.GetFieldFromReader<string>("zip_code");
                         rateVolume = reader.GetFieldFromReader<int>("rate_volume");
                         beginBalance = reader.GetFieldFromReader<decimal>("begin_balance");
                         endBalance = reader.GetFieldFromReader<decimal>("end_balance");
@@ -139,8 +142,9 @@ namespace PayerAccount.Dal.Remote
                 // Day and night payer's counter values
                 int dayValue = 0;
                 int nightValue = 0;
+
                 using (var command = GetDbCommandByQuery(
-                    $@"select first 1 countervalues.dayvalue dayValue, countervalues.nightvalue nightValue
+                    $@"select first 10 countervalues.dayvalue dayValue, countervalues.nightvalue nightValue, countervalues.receiveddate receiveddate
                          from countervalues
                          join customercounter on
                            customercounter.id = countervalues.customercounterid
@@ -150,15 +154,43 @@ namespace PayerAccount.Dal.Remote
                 {
                     using (var reader = command.ExecuteReader())
                     {
-                        if (reader.Read())
+                        while (reader.Read())
                         {
-                            dayValue = reader.GetFieldFromReader<int>("dayValue");
-                            nightValue = reader.GetFieldFromReader<int>("nightValue");
+                            payerCounterValues.Add(
+                                new PayerCounterValue(
+                                    reader.GetFieldFromReader<int>("dayValue"), 
+                                    reader.GetFieldFromReader<int>("nightValue"), 
+                                    reader.GetFieldFromReader<DateTime>("receiveddate")));
                         }
                     }
-
                     command.Transaction.Commit();
                 }
+
+                using (var command = GetDbCommandByQuery(
+                     $@"select ENTRY_DATE,PERIOD_AS_STRING,DAY_VALUE,DAY_KWH,NIGHT_VALUE,NIGHT_KWH,ESTIMATE_VALUE, FACILITY_VALUE,PAYMENT_VALUE,BALANCE from get_operations_list({payerNumber}, '01.01.2018')"))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                           payerPaymentExtracharges.Add(
+                                new PayerPaymentExtracharge(
+                                    reader.GetFieldFromReader<DateTime>("ENTRY_DATE"),
+                                    reader.GetFieldFromReader<string>("PERIOD_AS_STRING"),
+                                    reader.GetFieldFromReader<int>("DAY_VALUE"),
+                                    reader.GetFieldFromReader<int>("DAY_KWH"),
+                                    reader.GetFieldFromReader<int>("NIGHT_VALUE"),
+                                    reader.GetFieldFromReader<int>("NIGHT_KWH"),
+                                    reader.GetFieldFromReader<decimal>("ESTIMATE_VALUE"),
+                                    reader.GetFieldFromReader<decimal>("FACILITY_VALUE"),
+                                    reader.GetFieldFromReader<decimal>("PAYMENT_VALUE"),
+                                    reader.GetFieldFromReader<decimal>("BALANCE")
+                                    ));
+                        }
+                    }
+                    command.Transaction.Commit();
+                }
+
 
                 // First day of previous month
                 var prevMonth = currentDate.AddMonths(-1);
@@ -206,7 +238,7 @@ namespace PayerAccount.Dal.Remote
                     nightPublicspaceVolume, defaultPublicspaceTariff, dayPublicspaceTariff, nightPublicspaceTariff,
                     estimateTotal, estimatePublicspaceTotal, adjustmentTotal, paymentTotal, groupTotalFloorSpace,
                     defaultEnergyTariff, dayEnergyTariff, nightEnergyTariff, defaultTransferTariff,
-                    dayTransferTariff, nightTransferTariff);
+                    dayTransferTariff, nightTransferTariff, payerCounterValues, payerPaymentExtracharges);
             }
             catch (Exception ex)
             {

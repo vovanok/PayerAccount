@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace PayerAccount.Models.Remote
+namespace PayerAccount.Dal.Remote.Data
 {
     public class PayerState
     {
@@ -27,7 +28,7 @@ namespace PayerAccount.Models.Remote
         public int RoomCount { get; private set; }
 
         // Zip code (11, ZIP_CODE)
-        public int ZipCode { get; private set; }
+        public string ZipCode { get; private set; }
 
         // Норматив 104 кВт * ч на 1 чел (12, RATE_VOLUME)
         public int RateVolume { get; private set; }
@@ -107,6 +108,12 @@ namespace PayerAccount.Models.Remote
         // (44, NIGHT_TRANSFER_TARIFF)
         public decimal NightTransferTariff { get; private set; }
 
+        // 10 first counterValues
+        public List<PayerCounterValue> PayerCounterValues { get; private set; }
+
+        //Extrachrges and payments
+        public List<PayerPaymentExtracharge> PayerPaymentExtracharges { get; private set; }
+
         public PayerState(
             decimal balance,
             int dayValue,
@@ -119,7 +126,7 @@ namespace PayerAccount.Models.Remote
             decimal totalFloorSpace, 
             int registratedCount, 
             int roomCount,
-            int zipCode,
+            string zipCode,
             int rateVolume,
             decimal beginBalance,
             decimal endBalance,
@@ -145,7 +152,9 @@ namespace PayerAccount.Models.Remote
             decimal nightEnergyTariff, 
             decimal defaultTransferTariff, 
             decimal dayTransferTariff,
-            decimal nightTransferTariff)
+            decimal nightTransferTariff,
+            List<PayerCounterValue> payerCounterValues,
+            List<PayerPaymentExtracharge> payerPaymentExtracharges)
         {
             Balance = balance;
             DayValue = dayValue;
@@ -185,6 +194,8 @@ namespace PayerAccount.Models.Remote
             DefaultTransferTariff = defaultTransferTariff;
             DayTransferTariff = dayTransferTariff;
             NightTransferTariff = nightTransferTariff;
+            PayerCounterValues = payerCounterValues;
+            PayerPaymentExtracharges = payerPaymentExtracharges;
         }
     }
 }

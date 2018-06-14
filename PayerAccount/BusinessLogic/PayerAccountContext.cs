@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PayerAccount.Utils;
 using PayerAccount.Common;
 using PayerAccount.Models;
-using PayerAccount.Models.Remote;
+using PayerAccount.Dal.Remote.Data;
 using PayerAccount.Dal.Remote;
 using PayerAccount.Dal.Local;
 using PayerAccount.Dal.Local.Data;
@@ -38,13 +38,16 @@ namespace PayerAccount.BusinessLogic
             return new MainViewModel
             {
                 UserName = userSessionState.User.Name,
+                UserAddress = userSessionState.PayerState.Address,
                 UserNumber = userSessionState.User.Number,
                 UserBalance = userSessionState.PayerState.Balance,
                 UserDayCounterValue = userSessionState.PayerState.DayValue,
                 UserNightCounterValue = userSessionState.PayerState.NightValue,
                 UserCounterName = userSessionState.PayerState.CounterName,
                 UserCounterMountDate = userSessionState.PayerState.CounterMountDate,
-                UserCounterCheckDate = userSessionState.PayerState.CounterCheckDate
+                UserCounterCheckDate = userSessionState.PayerState.CounterCheckDate,
+                UserPayerCounterValues = userSessionState.PayerState.PayerCounterValues,
+                UserPayerPaymentExtracharges = userSessionState.PayerState.PayerPaymentExtracharges
             };
         }
 

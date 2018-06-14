@@ -1,5 +1,5 @@
 ﻿using PayerAccount.Dal.Local.Data;
-using PayerAccount.Models.Remote;
+using PayerAccount.Dal.Remote.Data;
 
 namespace PayerAccount.BusinessLogic
 {

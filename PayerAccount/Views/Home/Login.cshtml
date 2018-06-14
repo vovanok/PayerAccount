@@ -4,23 +4,42 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
-<div class="row">
-    <form method="post" action="/Home/Login">
-        <table>
-            <tr>
-                <td>Номер лицевого счета:</td>
-                <td><input asp-for="PayerNumber" type="text" /></td>
-            </tr>
-            <tr>
-                <td>Регион:</td>
-                <td><select asp-for="RegionId" asp-items="Model.Regions"></select></td>
-            </tr>
-            <tr>
-                <td>Пароль:</td>
-                <td><input asp-for="PayerPassword" type="password" /></td>
-            </tr>
-        </table>
-        <input type="submit" />
-    </form>
+<div class="limiter">
+    <div class="container-login100" style="background-image: url('images/1.svg');">
+        <div class="wrap-login100">
+            <form method="post" action="/Home/Login" class="login100-form validate-form">
+                   <span class="login100-form-logo">
+                        <img src="../images/logo.svg">
+                    </span>
+
+                    <span class="login100-form-title p-b-34 p-t-27">
+                        Личный кабинет
+                    </span>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter username">
+                        <input asp-for="PayerNumber" type="text" class="input100" placeholder="Номер" />
+                        <span class="focus-input100" data-placeholder="&#xf207;"></span>
+                    </div>
+                    <div class="wrap-input100 validate-input" data-validate="Enter raion">
+                        <select asp-for="RegionId" asp-items="Model.Regions" class="form-control"></select>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter password">
+                        <input asp-for="PayerPassword" type="password" class="input100" placeholder="Пароль" />
+                        <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                    </div>
+
+                    <div class="contact100-form-checkbox">
+                        <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                        <label class="label-checkbox100" for="ckb1">
+                            Запомнить меня
+                        </label>
+                    </div>
+
+                    <div class="container-login100-form-btn">
+                        <input type="submit" class="login100-form-btn" />
+                    </div>
+                </form>
+        </div>
+    </div>
 </div>
