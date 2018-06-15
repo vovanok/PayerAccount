@@ -64,7 +64,7 @@
                                 <h4 class="title">Профиль</h4>
                             </div>
                             <div class="content">
-                                <form>
+                                <form  >
                                     <div class="row">
 
                                         <div class="col-md-6">
@@ -90,41 +90,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Дневные показания</label>
-                                                <input type="text" class="form-control" placeholder="Company" value="@Model.UserDayCounterValue" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Ночные показания</label>
-                                                <input type="text" class="form-control" placeholder="Company" value="@Model.UserNightCounterValue" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Счетчик</label>
-                                                <input type="text" class="form-control" placeholder="Company" value="@Model.UserCounterName" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Дата установки</label>
-                                                <input type="text" class="form-control" placeholder="Company" value="@Model.UserCounterMountDate" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Дата поверки</label>
-                                                <input type="text" class="form-control" placeholder="Company" value="@Model.UserCounterCheckDate" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
+                                       <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Адрес</label>
@@ -132,8 +98,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Сохранить</button>
-                                    <div class="clearfix"></div>
+                                 
                                 </form>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -166,6 +131,25 @@
                                     </div>
 
                                 </div>
+                                <form method="post" action="/Home/Main">
+                                    <h4>Передать контрольные показания</h4>
+                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Дневные показания</label>
+                                                <input  asp-for="UserDayCounterValue" type="text" class="form-control" placeholder="Company" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Ночные показания</label>
+                                                <input  asp-for="UserNightCounterValue" type="text" class="form-control" placeholder="Company" />
+                                            </div> 
+                                        </div>
+                                    </div>                                 
+                                    <button type="submit" class="btn btn-info btn-fill pull-right">Сохранить</button>
+                                    <div class="clearfix"></div>
+                                </form>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="card">
@@ -225,7 +209,7 @@
                                                         }
                                                     </tbody>
                                                 </table>
-                                               
+
                                             </div>
                                         </div>
                                     </div>

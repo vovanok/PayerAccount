@@ -81,6 +81,7 @@ namespace PayerAccount.Controllers
             }
         }
 
+        [AcceptVerbs("get")]
         public IActionResult Main()
         {
             var mainModel = context.GetCurrentMainViewModel(HttpContext);
@@ -88,6 +89,21 @@ namespace PayerAccount.Controllers
                 return RedirectToAction("Login");
 
             return View(mainModel);
+        }
+
+        [AcceptVerbs("post")]
+        public IActionResult Main(MainViewModel mainModel)
+        {
+            try
+            {
+                context.SaveCounterValues(mainModel.UserDayCounterValue, mainModel.UserNightCounterValue, HttpContext);
+                return RedirectToAction("Main");
+            }
+            catch (Exception ex)
+            {
+                return OpenMessagePage(
+                    new MessageViewModel { Message = $"Save counter values failed: {ex.Message}", IsError = true });
+            }
         }
 
         public IActionResult GetPaymentReceipt()
@@ -122,5 +138,21 @@ namespace PayerAccount.Controllers
         {
             return RedirectToAction("Message", "Home", messageModel);
         }
+
+        //// save counter values
+        //[AcceptVerbs("post")]
+        //public IActionResult SaveCounterValue(CounterValueViewModel counterValueViewModel)
+        //{
+        //    try
+        //    {
+        //        
+        //        return RedirectToAction("Main");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return OpenMessagePage(
+        //            new MessageViewModel { Message = $"Login failed: {ex.Message}", IsError = true });
+        //    }
+        //}
     }
 }

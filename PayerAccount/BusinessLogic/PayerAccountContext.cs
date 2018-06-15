@@ -159,6 +159,7 @@ namespace PayerAccount.BusinessLogic
             localDb.Users.Add(newUser);
             localDb.SaveChanges();
         }
+  
 
         private PayerRepository GetPayerRepository(string dbUrl, string dbPath)
         {
@@ -229,6 +230,25 @@ namespace PayerAccount.BusinessLogic
             receiptDocumentWorker.Save(filenameForSave);
 
             return filenameForSave;
+        }
+
+        public void SaveCounterValues(int dayValue, int nightValue, HttpContext httpContext)
+        {
+            var sessionState = GetSessionState(httpContext);
+            if (sessionState == null)
+                throw new Exception("User isn't login");
+
+            // TODO: сдеалть валидацию котнрольных показаний
+
+            localDb.CounterValues.Add(new CounterValues
+            {
+                UserId = sessionState.User.Id,
+                Date = DateTime.Now,
+                DayValue = dayValue,
+                NightValue = nightValue
+            });
+
+            localDb.SaveChanges();
         }
     }
 }

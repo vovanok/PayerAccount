@@ -198,14 +198,19 @@ namespace PayerAccount.Dal.Remote
 
                 // Counter name
                 string counterName = string.Empty;
+          
                 using (var command = GetDbCommandByQuery(
-                    $@"select COUNTER_NAME from R090$GET_COUNTER_VALUES(
+                    $@"select COUNTER_NAME,END_DAY_VALUE, END_NIGHT_VALUE from R090$GET_COUNTER_VALUES(
                          {payerNumber}, '{prevMonthFirstDay.ToString("dd.MM.yyyy")}', '{currentDate.ToString("dd.MM.yyyy")}');"))
                 {
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
+                        {
                             counterName = reader.GetFieldFromReader<string>("COUNTER_NAME");
+                            dayValue = reader.GetFieldFromReader<int>("END_DAY_VALUE");
+                            nightValue = reader.GetFieldFromReader<int>("END_NIGHT_VALUE");
+                        }
                     }
 
                     command.Transaction.Commit();

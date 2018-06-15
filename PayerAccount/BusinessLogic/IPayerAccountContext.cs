@@ -13,5 +13,6 @@ namespace PayerAccount.BusinessLogic
         void Registrate(RegistrateViewModel registrateModel);
         MainViewModel GetCurrentMainViewModel(HttpContext httpContext);
         string GetPaymentReceiptPath(HttpContext httpContext);
+        void SaveCounterValues(int dayValue, int nightValue, HttpContext httpContext);
     }
 }

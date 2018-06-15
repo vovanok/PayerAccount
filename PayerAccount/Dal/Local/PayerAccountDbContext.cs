@@ -8,6 +8,7 @@ namespace PayerAccount.Dal.Local
         public DbSet<Region> Regions { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<CounterValues> CounterValues { get; set; }
 
         public PayerAccountDbContext(DbContextOptions options)
             : base(options)
