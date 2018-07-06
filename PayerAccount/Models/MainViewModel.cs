@@ -17,5 +17,6 @@ namespace PayerAccount.Models
         public DateTime UserCounterCheckDate { get; set; }
         public List<PayerCounterValue> UserPayerCounterValues { get; set; } 
         public List<PayerPaymentExtracharge> UserPayerPaymentExtracharges { get; set; }
+        
     }
 }

@@ -20,6 +20,65 @@ namespace PayerAccount.Dal.Remote
             connection = new FbConnection(string.Format(CONNECTION_STRING_FORMAT, url, path, user, password));
         }
 
+        public Boolean IsCounterValueValid(int payerNumber, int dayValue, int NightValue)
+        {
+            connection.Open();
+            var currentDate = DateTime.Now;
+            //check is there any countervalues for that day
+            using (var command = GetDbCommandByQuery(
+              $"select id from countervalues where countervalues.customerid = {payerNumber} and countervalues.receiveddate ='{currentDate.ToString("dd.MM.yyyy")}'"))
+            {
+                using (var reader = command.ExecuteReader())
+                {
+                    if (!reader.Read())
+                        return false;
+                }
+                command.Transaction.Commit();
+                return true;
+            }
+        }
+        public Boolean IsCounterValueCorrect(int payerNumber, int dayValue, int NightValue)
+        {
+            connection.Open();
+            var currentDate = DateTime.Now;
+            //check is there any countervalues for that day
+            using (var command = GetDbCommandByQuery(
+              $"select id from countervalues where countervalues.customerid = {payerNumber} and countervalues.receiveddate ='{currentDate.ToString("dd.MM.yyyy")}'"))
+            {
+                using (var reader = command.ExecuteReader())
+                {
+                    if (!reader.Read())
+                        return false;
+                }
+                command.Transaction.Commit();
+                return true;
+            }
+        }
+
+        public Boolean InsertCounterValue(int payerNumber, int dayValue, int NightValue, int customerCounter )
+        {
+            try
+            {
+                connection.Open();
+                var currentDate = DateTime.Now;
+                // Check account open
+                using (var command = GetDbCommandByQuery(
+                    $"insert into countervalues values (null, {payerNumber} ,{customerCounter},NULL,'{currentDate.ToString("dd.MM.yyyy")}',{dayValue},{NightValue},0,5)"))
+                {
+                    command.ExecuteReader();
+                    command.Transaction.Commit();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection?.Close();
+            }
+        }
         public PayerState Get(int payerNumber)
         {
             try
@@ -146,10 +205,7 @@ namespace PayerAccount.Dal.Remote
                 using (var command = GetDbCommandByQuery(
                     $@"select first 10 countervalues.dayvalue dayValue, countervalues.nightvalue nightValue, countervalues.receiveddate receiveddate
                          from countervalues
-                         join customercounter on
-                           customercounter.id = countervalues.customercounterid
-                           and customercounter.unmountdate is null
-                           and customercounter.customer_id = {payerNumber}
+                          where countervalues.customerid = {payerNumber}
                          order by countervalues.receiveddate desc"))
                 {
                     using (var reader = command.ExecuteReader())
@@ -219,6 +275,7 @@ namespace PayerAccount.Dal.Remote
                 // Counter check and mount dates
                 DateTime counterCheckDate = default(DateTime);
                 DateTime counterMountDate = default(DateTime);
+                int customerCounterId = 0;
                 using (var command = GetDbCommandByQuery(
                     $@"select checkDate, mountDate, id from customercounter
                          where customer_id = {payerNumber} and customercounter.unmountdate is null"))
@@ -229,6 +286,7 @@ namespace PayerAccount.Dal.Remote
                         {
                             counterCheckDate = reader.GetFieldFromReader<DateTime>("checkDate");
                             counterMountDate = reader.GetFieldFromReader<DateTime>("mountDate");
+                            customerCounterId = reader.GetFieldFromReader<int>("id");
                         }
                     }
 
@@ -243,7 +301,7 @@ namespace PayerAccount.Dal.Remote
                     nightPublicspaceVolume, defaultPublicspaceTariff, dayPublicspaceTariff, nightPublicspaceTariff,
                     estimateTotal, estimatePublicspaceTotal, adjustmentTotal, paymentTotal, groupTotalFloorSpace,
                     defaultEnergyTariff, dayEnergyTariff, nightEnergyTariff, defaultTransferTariff,
-                    dayTransferTariff, nightTransferTariff, payerCounterValues, payerPaymentExtracharges);
+                    dayTransferTariff, nightTransferTariff, payerCounterValues, payerPaymentExtracharges, customerCounterId);
             }
             catch (Exception ex)
             {

@@ -238,6 +238,38 @@ namespace PayerAccount.BusinessLogic
             if (sessionState == null)
                 throw new Exception("User isn't login");
 
+            var department = localDb.Departments.FirstOrDefault(item => item.Id == sessionState.User.DepartmentId);
+            if (department == null)
+                throw new Exception("User department is not found");
+
+            var payerRepository = GetPayerRepository(department.Url, department.Path);
+            if (sessionState.PayerState.CustomerCounterId ==0)
+            {
+                throw new Exception("User has no counter");
+            }
+
+            var isCounterValueInserted = false;
+
+            /*if (payerRepository.IsCounterValueValid(sessionState.User.Number, dayValue,nightValue))
+            {
+                throw new Exception("На этот день уже есть контрольные показания.");
+            }*/
+
+            if ((dayValue < sessionState.PayerState.DayValue) || (nightValue < sessionState.PayerState.NightValue))
+            {
+                throw new Exception("Новые показания не могут быть меньше предыдущих");
+            }
+
+
+            isCounterValueInserted = payerRepository.InsertCounterValue(sessionState.User.Number, dayValue, nightValue, sessionState.PayerState.CustomerCounterId);
+            
+            if (!isCounterValueInserted)
+                throw new Exception("Возникли технические проблемы. Попробуйте указать контрольные показания позже.");
+
+
+            
+
+
             // TODO: сдеалть валидацию котнрольных показаний
 
             localDb.CounterValues.Add(new CounterValues
@@ -249,6 +281,8 @@ namespace PayerAccount.BusinessLogic
             });
 
             localDb.SaveChanges();
+           
+
         }
     }
 }

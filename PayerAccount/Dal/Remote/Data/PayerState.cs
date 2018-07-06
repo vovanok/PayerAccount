@@ -114,6 +114,9 @@ namespace PayerAccount.Dal.Remote.Data
         //Extrachrges and payments
         public List<PayerPaymentExtracharge> PayerPaymentExtracharges { get; private set; }
 
+        //id of the counter
+        public int CustomerCounterId { get; private set; }
+
         public PayerState(
             decimal balance,
             int dayValue,
@@ -154,7 +157,9 @@ namespace PayerAccount.Dal.Remote.Data
             decimal dayTransferTariff,
             decimal nightTransferTariff,
             List<PayerCounterValue> payerCounterValues,
-            List<PayerPaymentExtracharge> payerPaymentExtracharges)
+            List<PayerPaymentExtracharge> payerPaymentExtracharges,
+            int customerCounterId)
+           
         {
             Balance = balance;
             DayValue = dayValue;
@@ -196,6 +201,7 @@ namespace PayerAccount.Dal.Remote.Data
             NightTransferTariff = nightTransferTariff;
             PayerCounterValues = payerCounterValues;
             PayerPaymentExtracharges = payerPaymentExtracharges;
+            CustomerCounterId =customerCounterId;
         }
     }
 }
